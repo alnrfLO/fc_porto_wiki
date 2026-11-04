@@ -69,7 +69,12 @@ jobs:
 
           L'app affiche le site en ligne : elle est donc toujours à jour, et les pages déjà consultées restent disponibles hors ligne.
           EOF
-          gh release create "$GITHUB_REF_NAME" fichiers/* \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "FC Porto Wiki $GITHUB_REF_NAME" \
-            --notes-file notes.md
+          # si la release existe deja je remplace juste les fichiers, sinon je la cree
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" fichiers/* --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" fichiers/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "FC Porto Wiki $GITHUB_REF_NAME" \
+              --notes-file notes.md
+          fi
