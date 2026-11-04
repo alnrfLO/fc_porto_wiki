@@ -35,6 +35,10 @@ const INTERNATIONAUX = ["Ligue des champions", "Ligue Europa", "intercontinental
 
 // ---------- Outils ----------
 
+// Bandeau affiché quand les données viennent de la mémoire de l'app (voir sw.js)
+const bandeauHorsLigne = document.querySelector(".hors-ligne");
+const signalerHorsLigne = (actif) => (bandeauHorsLigne.hidden = !actif);
+
 // Cache d'une minute côté navigateur ; `frais` force un nouvel appel (matchs en direct)
 const DUREE_CACHE = 60_000;
 const cache = new Map();
@@ -42,11 +46,16 @@ function api(chemin, frais = false) {
   const entree = cache.get(chemin);
   if (!frais && entree && Date.now() - entree.date < DUREE_CACHE) return entree.requete;
   const requete = fetch(chemin).then(async (r) => {
+    signalerHorsLigne(r.headers.has("x-hors-ligne"));
     if (!r.ok) {
       const corps = await r.json().catch(() => ({}));
       throw new Error(corps.detail || `Erreur ${r.status}`);
     }
     return r.json();
+  }, () => {
+    // Aucune réponse du réseau et rien en mémoire pour cette page
+    signalerHorsLigne(true);
+    throw Object.assign(new Error("Pas de connexion"), { horsLigne: true });
   });
   requete.catch(() => cache.delete(chemin));
   cache.set(chemin, { date: Date.now(), requete });
@@ -85,7 +94,9 @@ const chargeur = (petit = false) => `<div class="chargeur${petit ? " petit" : ""
 const erreur = (e) => `
   <div class="conteneur"><div class="erreur">
     <h2>Hors-jeu</h2>
-    <p>Une source de données ne répond pas&#8239;: ${esc(e.message)}</p>
+    <p>${e.horsLigne
+      ? "Pas de connexion, et cette page n'a pas encore été enregistrée&#8239;: elle le sera à la prochaine visite en ligne."
+      : `Une source de données ne répond pas&#8239;: ${esc(e.message)}`}</p>
     <button class="bouton" onclick="location.reload()">Réessayer</button>
   </div></div>`;
 
@@ -962,3 +973,46 @@ async function naviguer() {
 
 addEventListener("hashchange", naviguer);
 naviguer();
+
+// ---------- App installable ----------
+
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+
+const boutonInstaller = document.querySelector(".installer");
+const astuceIos = document.querySelector(".astuce");
+const dejaInstallee = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const surIos = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+let invitation = null;
+
+// Chrome, Edge et Android proposent l'installation : on la garde pour notre bouton
+addEventListener("beforeinstallprompt", (e) => {
+  invitation = e;
+  boutonInstaller.hidden = false;
+});
+addEventListener("appinstalled", () => {
+  invitation = null;
+  boutonInstaller.hidden = true;
+});
+
+// Sur iPhone et iPad, Safari ne propose rien : le bouton explique le geste à faire
+if (surIos && !dejaInstallee) boutonInstaller.hidden = false;
+
+boutonInstaller.addEventListener("click", async () => {
+  if (invitation) {
+    invitation.prompt();
+    await invitation.userChoice;
+    invitation = null;
+    boutonInstaller.hidden = true;
+  } else if (surIos) {
+    astuceIos.hidden = false;
+  }
+});
+astuceIos.querySelector(".astuce-fermer").addEventListener("click", () => (astuceIos.hidden = true));
+
+// Hors ligne : bandeau d'information, puis données fraîches dès le retour du réseau
+addEventListener("offline", () => signalerHorsLigne(true));
+addEventListener("online", () => {
+  cache.clear();
+  naviguer();
+});
+if (!navigator.onLine) signalerHorsLigne(true);

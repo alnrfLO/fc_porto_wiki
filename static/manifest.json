@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name": "FC Porto Wiki",
+  "short_name": "FC Porto",
+  "description": "Matchs, classements, effectif, histoire et palmarès du FC Porto, toujours à jour.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#040919",
+  "theme_color": "#040919",
+  "categories": ["sports", "news"],
+  "icons": [
+    { "src": "/icons/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Matchs", "short_name": "Matchs", "url": "/#/matchs", "icons": [{ "src": "/icons/icone-192.png", "sizes": "192x192" }] },
+    { "name": "Classements", "short_name": "Classements", "url": "/#/classements", "icons": [{ "src": "/icons/icone-192.png", "sizes": "192x192" }] },
+    { "name": "Effectif", "short_name": "Effectif", "url": "/#/effectif", "icons": [{ "src": "/icons/icone-192.png", "sizes": "192x192" }] }
+  ]
+}

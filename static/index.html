@@ -16,6 +16,12 @@
   <meta property="og:locale" content="fr_FR">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="https://a.espncdn.com/i/teamlogos/soccer/500/437.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="FC Porto">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Big+Shoulders+Display:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -29,6 +35,10 @@
       <img src="https://a.espncdn.com/i/teamlogos/soccer/500/437.png" alt="">
       <span>FC Porto<em>Wiki</em></span>
     </a>
+    <button class="installer" type="button" title="Installer l'app" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg>
+      <span class="installer-texte">Installer l'app</span>
+    </button>
     <button class="menu-bouton" type="button" aria-expanded="false" aria-controls="nav" aria-label="Ouvrir le menu">
       <span></span><span></span>
     </button>
@@ -59,6 +69,17 @@
       </p>
     </div>
   </footer>
+
+  <p class="hors-ligne" role="status" hidden>Hors ligne · dernières données enregistrées</p>
+
+  <div class="astuce" role="dialog" aria-labelledby="astuce-titre" hidden>
+    <svg class="astuce-icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M7 11H5v10h14V11h-2"/></svg>
+    <div>
+      <strong id="astuce-titre">Installer l'app sur iPhone</strong>
+      <p>Dans Safari, touche <em>Partager</em> en bas de l'écran, puis «&#8239;Sur l'écran d'accueil&#8239;».</p>
+    </div>
+    <button type="button" class="astuce-fermer" aria-label="Fermer">&times;</button>
+  </div>
 
   <script type="module" src="/app.js"></script>
 </body>
