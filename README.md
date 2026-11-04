@@ -31,6 +31,14 @@ Toutes les sources sont **gratuites, sans inscription et sans clé API**.
 
 Si une source ne répond plus, l'API renvoie la dernière version connue, et l'accueil s'affiche même sans les images ou les textes de Wikipédia.
 
+## L'app
+
+Le site s'installe comme une app sur téléphone ou ordinateur, sans passer par un store :
+- **Android, Chrome, Edge** : bouton « Installer l'app » en haut à droite (ou le menu du navigateur)
+- **iPhone, iPad** : dans Safari, Partager puis « Sur l'écran d'accueil » (le bouton du site rappelle le geste)
+
+L'app s'ouvre en plein écran avec sa propre icône. Sans réseau, elle affiche les dernières données consultées, avec un bandeau « Hors ligne ». En ligne, tout vient du serveur, donc l'app se met à jour en même temps que le site. Le fonctionnement hors ligne est dans `static/sw.js`, la description de l'app dans `static/manifest.json`.
+
 ## Lancer le projet
 
 ```bash
