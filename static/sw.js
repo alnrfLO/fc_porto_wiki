@@ -1,6 +1,6 @@
-// Service worker de l'app : le site et les dernières données restent disponibles sans réseau.
-// En ligne, tout vient toujours du serveur (le site se met à jour à chaque push) ;
-// hors ligne, on affiche la dernière version enregistrée.
+// le service worker de l app : le site et les dernieres donnees marchent meme sans reseau.
+// en ligne tout vient du serveur (donc le site se met a jour a chaque push),
+// hors ligne sa affiche la derniere version enregistree.
 
 const CACHE = "fc-porto-v1";
 const POLICES = "fc-porto-polices";
@@ -18,7 +18,7 @@ self.addEventListener("activate", (e) => {
   );
 });
 
-// Polices Google : elles ne changent pas, on les garde dès le premier chargement
+// les polices google changent jamais donc je les garde des le premier chargement
 async function police(requete) {
   const cache = await caches.open(POLICES);
   const enregistree = await cache.match(requete);
@@ -28,14 +28,14 @@ async function police(requete) {
   return reponse;
 }
 
-// Une réponse tirée de la mémoire porte l'en-tête x-hors-ligne : la page affiche alors un bandeau
+// une reponse qui vient de la memoire a l en-tete x-hors-ligne, comme sa la page affiche le bandeau
 function horsLigne(reponse) {
   const entetes = new Headers(reponse.headers);
   entetes.set("x-hors-ligne", "1");
   return new Response(reponse.body, { status: reponse.status, statusText: reponse.statusText, headers: entetes });
 }
 
-// Site et données : la version en ligne d'abord, la dernière enregistrée sinon
+// site et donnees : la version en ligne d abord, sinon la derniere enregistree
 async function reseauDAbord(requete) {
   try {
     const reponse = await fetch(requete);
@@ -62,5 +62,5 @@ self.addEventListener("fetch", (e) => {
   } else if (url.origin === location.origin && !url.pathname.startsWith("/docs") && url.pathname !== "/openapi.json") {
     e.respondWith(reseauDAbord(request));
   }
-  // Les logos (ESPN) et les images (Wikipédia, TheSportsDB) restent gérés par le navigateur
+  // les logos (espn) et les images (wikipedia, thesportsdb) je laisse le navigateur gerer
 });

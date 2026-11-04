@@ -5,6 +5,6 @@ description = "Wiki du FC Porto : matchs, classements, effectif, histoire, palma
 requires-python = ">=3.12"
 dependencies = ["fastapi", "uvicorn", "requests", "tzdata"]
 
-# Vercel : l'application FastAPI se trouve dans api.py
+# pour vercel : l app fastapi est dans api.py
 [tool.vercel]
 entrypoint = "api:app"

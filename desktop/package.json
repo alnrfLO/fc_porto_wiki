@@ -1,0 +1,79 @@
+{
+  "name": "fc-porto-wiki",
+  "productName": "FC Porto Wiki",
+  "version": "1.0.0",
+  "description": "Matchs, classements, effectif, histoire et palmarès du FC Porto, toujours à jour.",
+  "homepage": "https://fc-porto-wiki.vercel.app",
+  "author": "alnrfLO <233749779+alnrfLO@users.noreply.github.com>",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "windows": "electron-builder --win --publish never",
+    "linux": "electron-builder --linux --publish never"
+  },
+  "build": {
+    "appId": "io.github.alnrflo.fcportowiki",
+    "productName": "FC Porto Wiki",
+    "copyright": "Projet de fan, non affilié au FC Porto",
+    "files": [
+      "main.js",
+      "hors-ligne.html",
+      "icone.png"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "FC-Porto-Wiki-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FC Porto Wiki",
+      "installerLanguages": [
+        "fr_FR"
+      ],
+      "language": "1036"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Network",
+      "synopsis": "Le wiki du FC Porto",
+      "maintainer": "alnrfLO <233749779+alnrfLO@users.noreply.github.com>",
+      "artifactName": "FC-Porto-Wiki.${ext}"
+    },
+    "deb": {
+      "artifactName": "fc-porto-wiki_amd64.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.2.2",
+    "electron-builder": "^26.18.0"
+  }
+}

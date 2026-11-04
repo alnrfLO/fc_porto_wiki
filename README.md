@@ -2,9 +2,10 @@
 
 Un wiki du FC Porto : matchs, classements, effectif, histoire, palmarès et stade, toujours à jour.
 
-Le projet est en deux parties :
+Le projet est en trois parties :
 - **`api.py`** : une API FastAPI qui récupère et met en forme les données (avec un cache pour ne pas surcharger les sources), et qui sert aussi le site
 - **`static/`** : le site en HTML, CSS et JavaScript, sans framework ni étape de build. Ambiance « Nuit au Dragão » : bleu nuit, projecteurs, typographie de stade
+- **`desktop/`** : l'app Windows et Linux (Electron)
 
 ## Sources de données
 
@@ -31,10 +32,36 @@ Toutes les sources sont **gratuites, sans inscription et sans clé API**.
 
 Si une source ne répond plus, l'API renvoie la dernière version connue, et l'accueil s'affiche même sans les images ou les textes de Wikipédia.
 
-## L'app
+## Les apps
 
-Le site s'installe comme une app sur téléphone ou ordinateur, sans passer par un store :
-- **Android, Chrome, Edge** : bouton « Installer l'app » en haut à droite (ou le menu du navigateur)
+### Windows et Linux
+
+Une vraie app de bureau, à télécharger depuis les [releases](https://github.com/alnrfLO/fc_porto_wiki/releases/latest) (ou le bouton « Installer l'app » du site) :
+- **Windows** : `FC-Porto-Wiki-Setup.exe`, installeur en français avec raccourcis sur le Bureau et dans le menu Démarrer. L'app n'étant pas signée, Windows peut afficher « Windows a protégé votre ordinateur » : « Informations complémentaires », puis « Exécuter quand même ».
+- **Linux** : `FC-Porto-Wiki.AppImage` (à rendre exécutable) ou `fc-porto-wiki_amd64.deb`
+
+L'app (dossier `desktop/`, faite avec Electron) ouvre le site dans sa propre fenêtre : elle est toujours à jour, garde les pages déjà vues hors ligne, et ouvre les liens externes dans le navigateur. Raccourcis : F5 pour actualiser, Alt+flèches pour naviguer, Ctrl +/- pour zoomer, F11 pour le plein écran.
+
+Pour la tester ou construire l'installeur en local (Node.js requis) :
+
+```bash
+cd desktop
+npm install
+npm start          # lance l'app
+npm run windows    # crée desktop/dist/FC-Porto-Wiki-Setup.exe
+```
+
+**Publier une nouvelle version** : créer un tag, GitHub construit les versions Windows et Linux et les publie dans une release (`.github/workflows/app-bureau.yml`) :
+
+```bash
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+### Téléphone
+
+Le site s'installe comme une app, sans passer par un store :
+- **Android** : bouton « Installer l'app » en haut à droite (ou le menu de Chrome)
 - **iPhone, iPad** : dans Safari, Partager puis « Sur l'écran d'accueil » (le bouton du site rappelle le geste)
 
 L'app s'ouvre en plein écran avec sa propre icône. Sans réseau, elle affiche les dernières données consultées, avec un bandeau « Hors ligne ». En ligne, tout vient du serveur, donc l'app se met à jour en même temps que le site. Le fonctionnement hors ligne est dans `static/sw.js`, la description de l'app dans `static/manifest.json`.

@@ -1,4 +1,4 @@
-// FC Porto Wiki · site sur mesure, servi par api.py
+// fc porto wiki, le site fait main, servi par api.py
 
 const vue = document.getElementById("vue");
 const LOGO_PORTO = "https://a.espncdn.com/i/teamlogos/soccer/500/437.png";
@@ -33,13 +33,13 @@ const RESULTATS = { V: "Victoire", N: "Match nul", D: "Défaite" };
 const GRANDS_TROPHEES = ["Ligue des champions", "Ligue Europa", "intercontinentale", "Supercoupe de l", "Championnat du Portugal", "Coupe du Portugal"];
 const INTERNATIONAUX = ["Ligue des champions", "Ligue Europa", "intercontinentale", "Supercoupe de l"];
 
-// ---------- Outils ----------
+// ---------- outils ----------
 
-// Bandeau affiché quand les données viennent de la mémoire de l'app (voir sw.js)
+// le bandeau qui s affiche quand les donnees viennent de la memoire de l app (voir sw.js)
 const bandeauHorsLigne = document.querySelector(".hors-ligne");
 const signalerHorsLigne = (actif) => (bandeauHorsLigne.hidden = !actif);
 
-// Cache d'une minute côté navigateur ; `frais` force un nouvel appel (matchs en direct)
+// cache d une minute dans le navigateur, `frais` force un nouvel appel (pour les matchs en direct)
 const DUREE_CACHE = 60_000;
 const cache = new Map();
 function api(chemin, frais = false) {
@@ -53,7 +53,7 @@ function api(chemin, frais = false) {
     }
     return r.json();
   }, () => {
-    // Aucune réponse du réseau et rien en mémoire pour cette page
+    // pas de reponse du reseau et rien en memoire pour cette page
     signalerHorsLigne(true);
     throw Object.assign(new Error("Pas de connexion"), { horsLigne: true });
   });
@@ -69,7 +69,7 @@ const esc = (texte) => String(texte ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&
 
 const enDate = (iso) => new Date(iso.length === 10 ? `${iso}T12:00:00Z` : iso);
 const format = (options) => new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", ...options });
-const premier = (texte) => texte.replace(/(^|\s)1(\s)/, "$11er$2"); // « 1 août » → « 1er août »
+const premier = (texte) => texte.replace(/(^|\s)1(\s)/, "$11er$2"); // pour avoir « 1er août » et pas « 1 août »
 const jour = (iso) => premier(format({ weekday: "short", day: "numeric", month: "short" }).format(enDate(iso)));
 const jourLong = (iso) => premier(format({ weekday: "long", day: "numeric", month: "long" }).format(enDate(iso)));
 const heure = (iso) => format({ hour: "2-digit", minute: "2-digit" }).format(enDate(iso));
@@ -87,7 +87,7 @@ function paragraphes(texte, lettrine = false) {
   }).join("");
 }
 
-// ---------- Composants ----------
+// ---------- composants ----------
 
 const chargeur = (petit = false) => `<div class="chargeur${petit ? " petit" : ""}" aria-busy="true"><img src="${LOGO_PORTO}" alt=""><span>Chargement…</span></div>`;
 
@@ -123,7 +123,7 @@ function bandeStats(p, titre, avecRang = true) {
     </div>`;
 }
 
-// Logo manquant (ou absent du CDN d'ESPN pour les petits clubs) : initiale du club dans un rond
+// logo qui manque (ou que le cdn d espn a pas pour les petits clubs) : je mets l initiale du club dans un rond
 document.addEventListener("error", (e) => {
   const img = e.target;
   if (img.tagName !== "IMG") return;
@@ -154,7 +154,7 @@ function ligneMatch(m) {
   if (m.resultat) badge = `<span class="res ${m.resultat}" title="${RESULTATS[m.resultat]}">${m.resultat}</span>`;
   else if (m.etat === "in") badge = `<span class="direct">Live</span>`;
 
-  // Les matchs ESPN ont une fiche détaillée ; ceux d'openfootball (saisons passées) non
+  // les matchs espn ont une fiche detaillee, ceux d openfootball (saisons passees) non
   const balise = m.id ? "a" : "article";
   const lien = m.id ? ` href="#/match/${esc(m.ligue)}/${esc(m.id)}"` : "";
   return `
@@ -232,9 +232,9 @@ function legende(lignes) {
   return `<ul class="legende">${zones.map((z) => `<li><i style="background: ${ZONES[z] ?? "#888"}"></i>${esc(z)}</li>`).join("")}</ul>`;
 }
 
-// ---------- Animations ----------
+// ---------- animations ----------
 
-// Minuteurs de la page en cours (compte à rebours, suivi du direct), arrêtés à chaque navigation
+// les minuteurs de la page (compte a rebours, suivi du direct), je les arrete a chaque changement de page
 let minuteurs = [];
 const repeter = (fonction, ms) => {
   const id = setInterval(fonction, ms);
@@ -269,7 +269,7 @@ function animer(racine) {
   racine.querySelectorAll(".apparait:not(.visible), [data-compte]").forEach((el) => observateur.observe(el));
 }
 
-// Compte à rebours dans #compte ; appelle `auCoupDEnvoi` une fois arrivé à zéro
+// compte a rebours dans #compte, sa appelle `auCoupDEnvoi` quand sa arrive a zero
 function demarrerCompteARebours(date, auCoupDEnvoi) {
   const el = document.getElementById("compte");
   if (!el) return;
@@ -294,7 +294,7 @@ function demarrerCompteARebours(date, auCoupDEnvoi) {
   maj();
 }
 
-// Recharge une fiche de match toutes les 30 s tant qu'il est en cours
+// recharge la fiche du match toutes les 30 s tant qu il est en cours
 function suivreLeDirect(chemin, rendu) {
   const id = repeter(async () => {
     const detail = await api(chemin, true).catch(() => null);
@@ -304,9 +304,9 @@ function suivreLeDirect(chemin, rendu) {
   }, 30_000);
 }
 
-// ---------- Pages ----------
+// ---------- pages ----------
 
-// Partie centrale de l'affiche : compte à rebours avant le match, score ensuite
+// le milieu de l affiche : compte a rebours avant le match, le score apres
 function centreAffiche(d) {
   if (d.etat === "pre") {
     return `<div class="compte" id="compte"></div><div class="affiche-heure">Coup d’envoi <strong>${heure(d.date)}</strong></div>`;
@@ -333,7 +333,7 @@ function affiche(m) {
     </section>`;
 }
 
-// Branche l'affiche sur la fiche du match : forme des équipes, puis score en direct
+// branche l affiche sur la fiche du match : forme des equipes puis score en direct
 function brancherAffiche(m) {
   const chemin = `/matchs/${m.ligue}/${m.id}`;
   let suivi = false;
@@ -358,7 +358,7 @@ function brancherAffiche(m) {
 }
 
 async function accueil() {
-  // Matchs et classement sont indispensables ; le reste est un bonus qui peut manquer
+  // les matchs et le classement il les faut absolument, le reste c est du bonus qui peut manquer
   const optionnels = resultatsOptionnels([api("/porto/club"), api("/porto/stade"), api("/porto/palmares")]);
   const [liga, prochains, resultats] = await Promise.all([
     api("/classement/liga-portugal"), api("/porto/matchs"), api("/porto/resultats"),
@@ -428,7 +428,7 @@ async function accueil() {
       </section>
 
       ${blocClub}`,
-    // Les coupes lues sur Wikipédia n'ont pas de fiche ESPN : compte à rebours seul, sans suivi du direct
+    // les coupes prises sur wikipedia ont pas de fiche espn : juste le compte a rebours, pas de direct
     init: () => suivant && (suivant.id ? brancherAffiche(suivant) : demarrerCompteARebours(suivant.date)),
   };
 }
@@ -786,7 +786,7 @@ async function stade() {
   };
 }
 
-// Courbe de la position de Porto journée par journée (1er en haut), redessinée à la largeur du conteneur
+// la courbe de la position de porto journee par journee (1er en haut), redessinee a la largeur du bloc
 let observateurCourbe = null;
 const rangTexte = (n) => `${n}${n === 1 ? "er" : "e"}`;
 
@@ -930,7 +930,7 @@ async function saisons() {
   };
 }
 
-// ---------- Routeur ----------
+// ---------- routeur ----------
 
 const routes = { "": accueil, matchs, classements, effectif, histoire, palmares, stade, saisons, match: pageMatch };
 let navigationEnCours = 0;
@@ -974,42 +974,66 @@ async function naviguer() {
 addEventListener("hashchange", naviguer);
 naviguer();
 
-// ---------- App installable ----------
+// ---------- app installable ----------
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
 
 const boutonInstaller = document.querySelector(".installer");
-const astuceIos = document.querySelector(".astuce");
-const dejaInstallee = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-const surIos = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const astuceIos = document.querySelector(".astuce:not(.astuce-pc)");
+const astucePc = document.querySelector(".astuce-pc");
+const boutonNavigateur = astucePc.querySelector(".astuce-navigateur");
+const agent = navigator.userAgent;
+const surIos = /iphone|ipad|ipod/i.test(agent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const surPc = /windows|linux/i.test(agent) && !/android/i.test(agent) && !surIos;
+// deja dans l app : app pc (electron) ou app installee depuis le navigateur
+const dejaDansLApp = /electron\//i.test(agent) || matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 let invitation = null;
 
-// Chrome, Edge et Android proposent l'installation : on la garde pour notre bouton
-addEventListener("beforeinstallprompt", (e) => {
-  invitation = e;
-  boutonInstaller.hidden = false;
-});
-addEventListener("appinstalled", () => {
+async function installerDepuisLeNavigateur() {
+  invitation.prompt();
+  const { outcome } = await invitation.userChoice;
   invitation = null;
-  boutonInstaller.hidden = true;
-});
+  boutonNavigateur.hidden = true;
+  if (outcome === "accepted") {
+    boutonInstaller.hidden = true;
+    astucePc.hidden = true;
+  } else if (!surPc) {
+    boutonInstaller.hidden = true;
+  }
+}
 
-// Sur iPhone et iPad, Safari ne propose rien : le bouton explique le geste à faire
-if (surIos && !dejaInstallee) boutonInstaller.hidden = false;
-
-boutonInstaller.addEventListener("click", async () => {
-  if (invitation) {
-    invitation.prompt();
-    await invitation.userChoice;
+if (!dejaDansLApp) {
+  // chrome, edge et android proposent d installer : je garde l invitation pour mon bouton
+  addEventListener("beforeinstallprompt", (e) => {
+    invitation = e;
+    boutonInstaller.hidden = false;
+    boutonNavigateur.hidden = false;
+  });
+  addEventListener("appinstalled", () => {
     invitation = null;
     boutonInstaller.hidden = true;
-  } else if (surIos) {
-    astuceIos.hidden = false;
-  }
-});
-astuceIos.querySelector(".astuce-fermer").addEventListener("click", () => (astuceIos.hidden = true));
+    astucePc.hidden = true;
+  });
 
-// Hors ligne : bandeau d'information, puis données fraîches dès le retour du réseau
+  // sur pc le bouton propose toujours l app windows ou linux,
+  // sur iphone et ipad il explique ce qu il faut faire dans safari
+  if (surPc || surIos) boutonInstaller.hidden = false;
+  if (/linux/i.test(agent)) {
+    astucePc.querySelector('[data-systeme="windows"]').classList.add("fantome");
+    astucePc.querySelector('[data-systeme="linux"]').classList.remove("fantome");
+  }
+}
+
+boutonInstaller.addEventListener("click", () => {
+  if (surPc) astucePc.hidden = !astucePc.hidden;
+  else if (invitation) installerDepuisLeNavigateur();
+  else if (surIos) astuceIos.hidden = false;
+});
+boutonNavigateur.addEventListener("click", () => invitation && installerDepuisLeNavigateur());
+document.querySelectorAll(".astuce-fermer").forEach((b) => b.addEventListener("click", () => (b.closest(".astuce").hidden = true)));
+addEventListener("keydown", (e) => e.key === "Escape" && document.querySelectorAll(".astuce").forEach((a) => (a.hidden = true)));
+
+// hors ligne le bandeau s affiche, et des que le reseau revient je recharge les donnees
 addEventListener("offline", () => signalerHorsLigne(true));
 addEventListener("online", () => {
   cache.clear();
