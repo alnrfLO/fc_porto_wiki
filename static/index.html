@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FC Porto Wiki</title>
+  <meta name="description" content="Le wiki du FC Porto : matchs, classements, effectif, histoire, palmarès et stade du Dragão, toujours à jour.">
+  <meta name="theme-color" content="#040919">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FC Porto Wiki">
+  <meta property="og:title" content="FC Porto Wiki">
+  <meta property="og:description" content="Matchs, classements, effectif, histoire et palmarès du FC Porto, toujours à jour.">
+  <meta property="og:image" content="/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="https://a.espncdn.com/i/teamlogos/soccer/500/437.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Big+Shoulders+Display:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="barre">
+    <a class="marque" href="#/">
+      <img src="https://a.espncdn.com/i/teamlogos/soccer/500/437.png" alt="">
+      <span>FC Porto<em>Wiki</em></span>
+    </a>
+    <button class="menu-bouton" type="button" aria-expanded="false" aria-controls="nav" aria-label="Ouvrir le menu">
+      <span></span><span></span>
+    </button>
+    <nav class="nav" id="nav" aria-label="Navigation principale">
+      <a href="#/" data-route="">Accueil</a>
+      <a href="#/matchs" data-route="matchs">Matchs</a>
+      <a href="#/classements" data-route="classements">Classements</a>
+      <a href="#/effectif" data-route="effectif">Effectif</a>
+      <a href="#/histoire" data-route="histoire">Histoire</a>
+      <a href="#/palmares" data-route="palmares">Palmarès</a>
+      <a href="#/stade" data-route="stade">Stade</a>
+      <a href="#/saisons" data-route="saisons">Saisons</a>
+    </nav>
+  </header>
+
+  <main id="vue" tabindex="-1"></main>
+
+  <footer class="pied">
+    <div class="conteneur pied-grille">
+      <div class="marque pied-marque"><span>FC Porto<em>Wiki</em></span></div>
+      <p>
+        Données gratuites et sans clé&#8239;: <a href="https://github.com/pseudo-r/Public-ESPN-API">ESPN</a>,
+        <a href="https://fr.wikipedia.org/wiki/FC_Porto">Wikipédia</a> (texte sous licence
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>),
+        <a href="https://www.thesportsdb.com">TheSportsDB</a> et
+        <a href="https://github.com/openfootball/football.json">openfootball</a>.
+        Projet de fan, non affilié au FC Porto.
+      </p>
+    </div>
+  </footer>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
