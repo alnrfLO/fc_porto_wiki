@@ -13,18 +13,18 @@ import time
 
 app = FastAPI(title="FC Porto Wiki 🔵⚪")
 
-# Toutes les sources sont gratuites et sans inscription
+# toutes les sources sont gratuites et sans inscription, pas de cle api
 ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer"
 ESPN_CLASSEMENTS = "https://site.api.espn.com/apis/v2/sports/soccer"
 WIKIPEDIA = "https://fr.wikipedia.org"
-SPORTSDB = "https://www.thesportsdb.com/api/v1/json/123"  # "123" = clé publique
+SPORTSDB = "https://www.thesportsdb.com/api/v1/json/123"  # 123 c est la cle publique, tout le monde peut l utiliser
 OPENFOOTBALL = "https://raw.githubusercontent.com/openfootball/football.json/master"
 
 PORTO_ESPN = "437"
 PORTO_SPORTSDB = 134114
 STADE_SPORTSDB = 16021
 
-# Compétitions ESPN où Porto peut jouer : celles sans match cette saison sont ignorées
+# les compet espn ou porto peut jouer, celles ou y a pas de match cette saison sont zappees
 COMPETITIONS = {
     "por.1": "Liga Portugal",
     "uefa.champions": "Ligue des champions",
@@ -50,7 +50,7 @@ ZONES = {
 
 POSTES = {"G": "Gardiens", "D": "Défenseurs", "M": "Milieux", "F": "Attaquants"}
 
-# ESPN donne les nationalités en anglais (les pays absents restent en anglais)
+# espn donne les pays en anglais donc je traduis (ceux qui sont pas dans la liste restent en anglais)
 PAYS = {
     "Algeria": "Algérie", "Angola": "Angola", "Argentina": "Argentine", "Australia": "Australie",
     "Austria": "Autriche", "Belgium": "Belgique", "Brazil": "Brésil", "Cameroon": "Cameroun",
@@ -70,15 +70,15 @@ PAYS = {
     "Venezuela": "Venezuela", "Wales": "Pays de Galles",
 }
 
-# Parties de l'article Wikipédia déjà couvertes ailleurs (ou sans intérêt ici)
+# les parties de l article wikipedia que j affiche deja ailleurs (ou qui servent a rien ici)
 WIKI_EXCLUS = {"Palmarès et records", "Effectif professionnel actuel", "Transferts",
                "Notes et références", "Voir aussi", "Liens externes", "Annexes"}
 
 HEADERS = {"User-Agent": "fc-porto-wiki/1.0 (github.com/alnrfLO/fc_porto_wiki)"}
-CACHE_DIRECT = 30  # 30 s pour une fiche de match (il peut être en cours)
+CACHE_DIRECT = 30  # 30 s pour une fiche de match vu qu il peut etre en cours
 CACHE_MATCHS = 120  # 2 min pour les calendriers
 CACHE_DUREE = 600  # 10 min pour les classements
-CACHE_LONG = 86400  # 24 h pour Wikipédia et les images
+CACHE_LONG = 86400  # 24 h pour wikipedia et les images, sa bouge pas
 _cache = {}
 
 
@@ -91,7 +91,7 @@ def get_json(url, params=None, duree=CACHE_DUREE):
         r.raise_for_status()
         data = r.json()
     except requests.RequestException:
-        # Source en panne : on renvoie la dernière version connue s'il y en a une
+        # si la source est en panne je renvoie la derniere version que j ai, si y en a une
         if cle in _cache:
             return _cache[cle][1]
         raise
@@ -133,7 +133,7 @@ def format_match(event, ligue):
     equipes = {e["homeAway"]: e for e in c["competitors"]}
     dom, ext = equipes["home"], equipes["away"]
     statut = c["status"]["type"]
-    etat = statut["state"]  # pre / in / post
+    etat = statut["state"]  # pre = pas commence, in = en cours, post = fini
     if etat == "post" and not statut["completed"]:
         etat = "reporte"
 
@@ -158,7 +158,7 @@ def format_match(event, ligue):
     if etat == "post":
         porto, adversaire = (dom, ext) if dom["team"]["id"] == PORTO_ESPN else (ext, dom)
         match["resultat"] = resultat(float(score(porto)), float(score(adversaire)))
-        # Match nul gagné aux tirs au but (coupes)
+        # match nul mais gagne aux tirs au but (en coupe)
         if match["resultat"] == "N" and (porto.get("winner") or adversaire.get("winner")):
             match["resultat"] = "V" if porto.get("winner") else "D"
     return match
@@ -173,12 +173,12 @@ def matchs_porto(a_venir):
 
     with ThreadPoolExecutor() as pool:
         matchs = [m for liste in pool.map(charger, COMPETITIONS) for m in liste]
-    # Coupes absentes d'ESPN, lues sur Wikipédia (en bonus : le calendrier reste là si la page est indisponible)
+    # les coupes qu espn a pas je les prends sur wikipedia (en bonus : si la page marche pas le calendrier s affiche quand meme)
     matchs += [m for m in optionnel(matchs_wikipedia, []) if (m["etat"] == "pre") == a_venir]
     return sorted(matchs, key=lambda m: m["date"], reverse=not a_venir)
 
 
-# Compétitions qu'ESPN ne couvre pas : on les lit dans le calendrier de la page Wikipédia de la saison
+# les compet qu espn couvre pas : je les lis dans le calendrier de la page wikipedia de la saison
 COMPETITIONS_WIKIPEDIA = {"Coupe de la Ligue", "Supercoupe du Portugal"}
 MOIS = {"janvier": 1, "février": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6, "juillet": 7,
         "août": 8, "septembre": 9, "octobre": 10, "novembre": 11, "décembre": 12}
@@ -194,7 +194,7 @@ def cellules_html(ligne):
 
 
 def date_wikipedia(jour, heure):
-    # « 1 er août 2026 » et « 21:15 », à l'heure de Paris ; None si la date n'est pas encore fixée
+    # genre « 1 er août 2026 » et « 21:15 », heure de paris ; None si la date est pas encore fixee
     d = re.match(r"(\d{1,2})\s*(?:er\s+)?([a-zéû]+)\s+(\d{4})", jour)
     h = re.match(r"(\d{1,2}):(\d{2})", heure)
     if not d or d.group(2) not in MOIS:
@@ -205,7 +205,7 @@ def date_wikipedia(jour, heure):
 
 
 def matchs_wikipedia():
-    saison = classement("por.1")["saison"]  # « 2026-27 »
+    saison = classement("por.1")["saison"]  # genre « 2026-27 »
     debut = int(saison[:4])
     page = get_json(f"{WIKIPEDIA}/w/api.php", {
         "action": "parse", "page": f"Saison_{debut}-{debut + 1}_du_FC_Porto", "redirects": 1,
@@ -213,7 +213,7 @@ def matchs_wikipedia():
     })["parse"]["text"]
     lignes = [cellules_html(tr) for tr in re.findall(r"<tr.*?</tr>", re.sub(r"<style.*?</style>", "", page, flags=re.S), flags=re.S)]
 
-    # Stades : dans les fiches de match de la page (« domicile | score | extérieur | stade, ville »)
+    # les stades je les prends dans les fiches de match de la page (« domicile | score | exterieur | stade, ville »)
     stades = {(c[1], c[3]): c[4].split(",")[0].strip() for c in lignes
               if len(c) == 5 and re.fullmatch(r"\d+\s*-\s*\d+|-", c[2])}
     equipes = optionnel(lambda: [t["team"] for t in get_json(f"{ESPN}/por.1/teams", duree=CACHE_LONG)
@@ -229,7 +229,7 @@ def matchs_wikipedia():
 
     matchs = []
     for c in lignes:
-        # Lignes du calendrier : compétition | tour | date | heure | domicile | score | extérieur | statut
+        # une ligne du calendrier : competition | tour | date | heure | domicile | score | exterieur | statut
         if len(c) < 7 or c[0] not in COMPETITIONS_WIKIPEDIA:
             continue
         date = date_wikipedia(c[2], c[3])
@@ -239,7 +239,7 @@ def matchs_wikipedia():
         buts = [int(n) for n in re.findall(r"\d+", score)]
         joue = len(buts) >= 2
         if not joue and date < datetime.now(timezone.utc) - timedelta(hours=3):
-            continue  # match passé mais pas encore renseigné sur Wikipédia
+            continue  # match deja joue mais wikipedia l a pas encore mis a jour
         match = {
             "id": None, "ligue": "wikipedia", "date": date.strftime("%Y-%m-%dT%H:%MZ"), "competition": c[0],
             "domicile": domicile, "domicile_logo": logo_equipe(domicile),
@@ -251,7 +251,7 @@ def matchs_wikipedia():
         if joue:
             pour, contre = (buts[0], buts[1]) if est_porto(domicile) else (buts[1], buts[0])
             match["resultat"] = resultat(pour, contre)
-            if match["resultat"] == "N" and len(buts) >= 4:  # qualification aux tirs au but
+            if match["resultat"] == "N" and len(buts) >= 4:  # qualif aux tirs au but
                 tab_pour, tab_contre = (buts[2], buts[3]) if est_porto(domicile) else (buts[3], buts[2])
                 match["resultat"] = resultat(tab_pour, tab_contre)
         matchs.append(match)
@@ -274,7 +274,7 @@ STATUTS = {
     "Extra Time": "Prolongation", "Penalties": "Tirs au but", "Postponed": "Reporté",
 }
 
-# Statistiques de match affichées, dans l'ordre (les pourcentages sont calculés à part)
+# les stats de match que j affiche, dans l ordre (les pourcentages je les calcule a part)
 STATS_MATCH = {
     "possessionPct": "Possession", "totalShots": "Tirs", "shotsOnTarget": "Tirs cadrés",
     "wonCorners": "Corners", "saves": "Arrêts", "foulsCommitted": "Fautes",
@@ -432,7 +432,7 @@ def get_classement_ucl():
 @app.get("/porto/club")
 def get_club():
     equipe = get_json(f"{ESPN}/por.1/teams/{PORTO_ESPN}")["team"]
-    # Images et texte en bonus : la fiche reste utilisable si TheSportsDB ou Wikipédia tombent
+    # les images et le texte c est du bonus : la fiche marche meme si thesportsdb ou wikipedia tombent
     sportsdb = optionnel(lambda: get_json(f"{SPORTSDB}/lookupteam.php", {"id": PORTO_SPORTSDB}, CACHE_LONG)["teams"][0], {})
     wiki = optionnel(lambda: get_json(f"{WIKIPEDIA}/api/rest_v1/page/summary/FC_Porto", duree=CACHE_LONG), {})
     return {
@@ -473,7 +473,7 @@ def get_effectif():
 
 
 def nettoyer(texte):
-    texte = re.sub(r"\[[^\]]*\]", "", texte)  # renvois [1], [réf. nécessaire]...
+    texte = re.sub(r"\[[^\]]*\]", "", texte)  # je vire les renvois genre [1], [réf. nécessaire]...
     texte = re.sub(r"^={4,} (.+?) =+\s*$", r"#### \1", texte, flags=re.M)
     return texte.strip()
 
@@ -508,7 +508,7 @@ def html_en_texte(contenu):
     contenu = re.sub(r"<style.*?</style>", "", contenu, flags=re.S)
     contenu = re.sub(r"<(br|/tr|/li|/p|/th|/dd|/dt)[^>]*>", "\n", contenu)
     contenu = html.unescape(re.sub(r"<[^>]+>", " ", contenu))
-    contenu = re.sub(r"[ \t\xa0 ]+", " ", contenu)  # espaces insécables compris
+    contenu = re.sub(r"[ \t\xa0 ]+", " ", contenu)  # les espaces insecables aussi
     return re.sub(r"\n\s*\n+", "\n", contenu)
 
 
@@ -538,7 +538,7 @@ def get_stade():
     resume = get_json(f"{WIKIPEDIA}/api/rest_v1/page/summary/Stade_du_Dragon", duree=CACHE_LONG)
     article = article_wikipedia("Stade du Dragon")
 
-    # Capacité officielle de l'infobox Wikipédia (TheSportsDB donne un chiffre différent), TheSportsDB en secours
+    # la vraie capacite c est celle de l infobox wikipedia (thesportsdb donne un autre chiffre), thesportsdb si wikipedia repond pas
     infobox = optionnel(lambda: get_json(f"{WIKIPEDIA}/w/api.php", {
         "action": "parse", "page": "Stade_du_Dragon", "redirects": 1, "section": 0,
         "prop": "text", "format": "json", "formatversion": 2,
@@ -563,7 +563,7 @@ def get_saisons():
         arbre = get_json("https://api.github.com/repos/openfootball/football.json/git/trees/master",
                          {"recursive": 1}, CACHE_LONG)
     except requests.RequestException:
-        # L'API GitHub limite les requêtes par adresse IP (partagée en ligne) : on teste les fichiers un par un
+        # l api github limite les requetes par ip (et en ligne l ip est partagee) donc je teste les fichiers un par un
         return saisons_par_fichiers()
     return sorted((f["path"].split("/")[0] for f in arbre["tree"] if f["path"].endswith("/pt.1.json")), reverse=True)
 
@@ -594,7 +594,7 @@ def get_saison(saison: str):
     data = get_json(f"{OPENFOOTBALL}/{saison}/pt.1.json", duree=3600)
 
     def score_final(m):
-        # Le score est soit {"ft": [2, 1], "ht": [...]}, soit directement [2, 1]
+        # le score c est soit {"ft": [2, 1], "ht": [...]}, soit direct [2, 1]
         score = m.get("score")
         return score.get("ft") if isinstance(score, dict) else score
 
@@ -605,7 +605,7 @@ def get_saison(saison: str):
     def classer(table):
         return sorted(table.values(), key=lambda t: (-t["points"], t["buts_contre"] - t["buts_pour"], -t["buts_pour"]))
 
-    # Classement recalculé à partir des scores, journée par journée pour la courbe de Porto
+    # je recalcule le classement avec les scores, journee par journee pour faire la courbe de porto
     table, matchs, evolution = {}, [], []
     joues = sorted((m for m in data["matches"] if score_final(m)), key=journee)
     for i, m in enumerate(joues):
@@ -655,13 +655,13 @@ SITE = Path(__file__).parent / "static"
 
 @app.get("/", include_in_schema=False)
 def accueil(request: Request):
-    # WhatsApp, Discord, etc. exigent l'adresse complète de l'image d'aperçu : on la construit
-    # à partir de l'adresse du site (localhost, Vercel ou nom de domaine)
+    # whatsapp, discord etc veulent l adresse complete de l image d apercu donc je la construis
+    # avec l adresse du site (localhost, vercel ou un nom de domaine)
     hote = request.headers.get("x-forwarded-host") or request.headers.get("host", "")
     protocole = request.headers.get("x-forwarded-proto") or request.url.scheme
     page = (SITE / "index.html").read_text(encoding="utf-8")
     return HTMLResponse(page.replace('content="/og.jpg"', f'content="{html.escape(f"{protocole}://{hote}")}/og.jpg"'))
 
 
-# Le reste du site (dossier static/) est servi à la racine, après les routes de l'API
+# le reste du site (dossier static/) est servi a la racine, apres les routes de l api
 app.mount("/", StaticFiles(directory=SITE, html=True), name="site")

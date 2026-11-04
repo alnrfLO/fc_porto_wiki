@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self'">
+  <title>FC Porto Wiki</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      box-sizing: border-box;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(31, 94, 255, .35), transparent 70%),
+        #040919;
+      color: #eef2ff;
+      font: 400 17px/1.55 "Segoe UI", system-ui, sans-serif;
+      text-align: center;
+    }
+    img { width: 96px; height: 96px; border-radius: 22px; box-shadow: 0 0 40px rgba(61, 120, 255, .45); }
+    h1 { margin: 1.4rem 0 .4rem; font: 800 2rem/1.1 "Arial Narrow", "Segoe UI", sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+    p { max-width: 30rem; margin: 0 auto 1.6rem; color: #9aa6cc; }
+    small { display: block; margin-top: 1.2rem; color: #6b77a0; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="icone.png" alt="">
+    <h1>Pas de connexion</h1>
+    <p>FC Porto Wiki a besoin d'internet au premier lancement. Ensuite, les pages déjà consultées restent disponibles hors ligne.</p>
+    <small>Appuie sur F5 pour réessayer, l'app réessaie aussi toute seule.</small>
+  </main>
+  <script>
+    // sa reessaie des que le reseau revient, et toutes les 20 secondes au cas ou
+    const reessayer = () => { location.href = "https://fc-porto-wiki.vercel.app"; };
+    addEventListener("online", reessayer);
+    setInterval(() => navigator.onLine && reessayer(), 20000);
+  </script>
+</body>
+</html>
