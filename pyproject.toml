@@ -1,0 +1,10 @@
+[project]
+name = "fc-porto-wiki"
+version = "1.0.0"
+description = "Wiki du FC Porto : matchs, classements, effectif, histoire, palmarès et stade"
+requires-python = ">=3.12"
+dependencies = ["fastapi", "uvicorn", "requests", "tzdata"]
+
+# Vercel : l'application FastAPI se trouve dans api.py
+[tool.vercel]
+entrypoint = "api:app"

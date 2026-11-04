@@ -47,6 +47,10 @@ uvicorn api:app --reload
 
 Le site est sur http://127.0.0.1:8000, et la doc de l'API sur http://127.0.0.1:8000/docs.
 
+## Mettre en ligne sur Vercel
+
+Le projet est prêt pour Vercel, sans réglage : `pyproject.toml` indique que l'application est dans `api.py`. Sur [vercel.com/new](https://vercel.com/new), importe le dépôt GitHub et clique sur **Deploy**. Ensuite, chaque push sur `main` met le site à jour.
+
 ## Routes de l'API
 
 | Route | Description |
