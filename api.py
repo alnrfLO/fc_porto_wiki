@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import unicodedata
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import requests
 import html
@@ -559,9 +559,32 @@ def get_stade():
 
 @app.get("/saisons")
 def get_saisons():
-    arbre = get_json("https://api.github.com/repos/openfootball/football.json/git/trees/master",
-                     {"recursive": 1}, CACHE_LONG)
+    try:
+        arbre = get_json("https://api.github.com/repos/openfootball/football.json/git/trees/master",
+                         {"recursive": 1}, CACHE_LONG)
+    except requests.RequestException:
+        # L'API GitHub limite les requêtes par adresse IP (partagée en ligne) : on teste les fichiers un par un
+        return saisons_par_fichiers()
     return sorted((f["path"].split("/")[0] for f in arbre["tree"] if f["path"].endswith("/pt.1.json")), reverse=True)
+
+
+def saisons_par_fichiers():
+    if "saisons" in _cache and time.time() - _cache["saisons"][0] < CACHE_LONG:
+        return _cache["saisons"][1]
+
+    def existe(saison):
+        try:
+            return requests.head(f"{OPENFOOTBALL}/{saison}/pt.1.json", headers=HEADERS, timeout=10).ok
+        except requests.RequestException:
+            return False
+
+    candidates = [f"{a}-{(a + 1) % 100:02d}" for a in range(datetime.now().year, 2009, -1)]
+    with ThreadPoolExecutor(8) as pool:
+        saisons = [s for s, ok in zip(candidates, pool.map(existe, candidates)) if ok]
+    if not saisons:
+        raise HTTPException(502, "Impossible de récupérer la liste des saisons")
+    _cache["saisons"] = (time.time(), saisons)
+    return saisons
 
 
 @app.get("/saisons/{saison}")
@@ -627,5 +650,18 @@ def favicon():
     return RedirectResponse(logo(PORTO_ESPN))
 
 
-# Le site (dossier static/) est servi à la racine, après les routes de l'API
-app.mount("/", StaticFiles(directory=Path(__file__).parent / "static", html=True), name="site")
+SITE = Path(__file__).parent / "static"
+
+
+@app.get("/", include_in_schema=False)
+def accueil(request: Request):
+    # WhatsApp, Discord, etc. exigent l'adresse complète de l'image d'aperçu : on la construit
+    # à partir de l'adresse du site (localhost, Vercel ou nom de domaine)
+    hote = request.headers.get("x-forwarded-host") or request.headers.get("host", "")
+    protocole = request.headers.get("x-forwarded-proto") or request.url.scheme
+    page = (SITE / "index.html").read_text(encoding="utf-8")
+    return HTMLResponse(page.replace('content="/og.jpg"', f'content="{html.escape(f"{protocole}://{hote}")}/og.jpg"'))
+
+
+# Le reste du site (dossier static/) est servi à la racine, après les routes de l'API
+app.mount("/", StaticFiles(directory=SITE, html=True), name="site")
