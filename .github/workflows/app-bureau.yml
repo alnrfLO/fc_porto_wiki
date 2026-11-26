@@ -1,7 +1,5 @@
 name: App de bureau
 
-# sa construit l app windows et linux puis sa la publie dans une release github
-# a chaque tag de version (genre : git tag v1.0.1 && git push origin v1.0.1)
 on:
   push:
     tags: ["v*"]
@@ -69,7 +67,6 @@ jobs:
 
           L'app affiche le site en ligne : elle est donc toujours à jour, et les pages déjà consultées restent disponibles hors ligne.
           EOF
-          # si la release existe deja je remplace juste les fichiers, sinon je la cree
           if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" fichiers/* --repo "$GITHUB_REPOSITORY" --clobber
           else

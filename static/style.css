@@ -1,7 +1,3 @@
-/* ==========================================================
-   fc porto wiki · « nuit au dragao »
-   ========================================================== */
-
 :root {
   --nuit: #040919;
   --nuit-2: #081230;
@@ -30,7 +26,6 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-/* barres de defilement et controles en sombre (navigateur et app pc) */
 html { scroll-behavior: smooth; color-scheme: dark; scrollbar-color: var(--nuit-3) var(--nuit); }
 
 body {
@@ -45,7 +40,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* la lueur des projecteurs sur tout le site */
 body::before {
   content: "";
   position: fixed;
@@ -86,8 +80,6 @@ sup { font-size: .42em; line-height: 0; vertical-align: super; margin-left: .04e
 main, main:focus-visible { outline: none; min-height: 70vh; }
 .entree { animation: entree .7s var(--courbe); }
 @keyframes entree { from { opacity: 0; transform: translateY(12px); } }
-
-/* ---------- barre de navigation ---------- */
 
 .barre {
   position: sticky;
@@ -145,7 +137,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
   box-shadow: 0 0 10px var(--bleu-vif), 0 0 24px var(--halo);
 }
 
-/* menu plein ecran sur tel et tablette */
 .menu-bouton { display: none; }
 
 @media (max-width: 1000px) {
@@ -170,7 +161,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
   .menu-ouvert .menu-bouton span:first-child { transform: translateY(3.5px) rotate(45deg); }
   .menu-ouvert .menu-bouton span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
 
-  /* backdrop-filter enferme le menu fixe dans la barre donc je l enleve quand le menu est ouvert */
   .menu-ouvert, .menu-ouvert body { overflow: hidden; }
   .menu-ouvert .barre { background: var(--nuit); backdrop-filter: none; -webkit-backdrop-filter: none; }
 
@@ -212,9 +202,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
   .nav a.actif::after { display: none; }
 }
 
-/* ---------- app installable ---------- */
-
-/* bouton rond comme celui du menu, le texte s affiche que sur grand ecran */
 .installer {
   order: 3;
   display: inline-flex;
@@ -251,7 +238,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
   .installer:not([hidden]) + .menu-bouton { margin-left: 0; }
 }
 
-/* bandeau hors ligne et astuce pour installer sur iphone */
 .hors-ligne, .astuce {
   position: fixed;
   left: 50%;
@@ -310,7 +296,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
 }
 .astuce-fermer:hover { background: rgba(150, 180, 255, .2); }
 
-/* panneau de telechargement sur pc (sous le bouton, en haut a droite) */
 .astuce-pc {
   top: 4.6rem;
   right: var(--gouttiere);
@@ -334,8 +319,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
 }
 .astuce-navigateur:hover { color: var(--texte); }
 .astuce-navigateur[hidden] { display: none; }
-
-/* ---------- elements communs ---------- */
 
 .surtitre {
   display: flex;
@@ -401,11 +384,9 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
 .bouton.fantome:hover { border-color: var(--bleu-vif); }
 .boutons { display: flex; flex-wrap: wrap; gap: .75rem; }
 
-/* apparition quand on scroll */
 .apparait { opacity: 0; transform: translateY(20px); transition: opacity .9s var(--courbe), transform .9s var(--courbe); }
 .apparait.visible { opacity: 1; transform: none; }
 
-/* chargement et erreurs */
 .chargeur {
   display: grid;
   place-items: center;
@@ -425,8 +406,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
 .erreur h2 { margin: 0 0 .6rem; font: 900 2.4rem/1 var(--display); text-transform: uppercase; }
 .erreur p { color: var(--texte-2); }
 
-/* ---------- hero (accueil) ---------- */
-
 .hero {
   position: relative;
   isolation: isolate;
@@ -438,7 +417,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
   padding: clamp(6rem, 14vh, 10rem) 0 clamp(2rem, 5vw, 3.5rem);
 }
 
-/* photo du stade en bichromie bleue */
 .hero-photo {
   position: absolute;
   inset: -2%;
@@ -459,7 +437,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
     linear-gradient(90deg, rgba(4, 9, 25, .75) 0%, rgba(4, 9, 25, .1) 65%);
 }
 
-/* les faisceaux des projecteurs */
 .projecteurs {
   position: absolute;
   inset: 0;
@@ -511,7 +488,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
 }
 @keyframes flotte { 50% { transform: translateY(-14px) rotate(-1.5deg); } }
 
-/* bande de stats facon tableau d affichage */
 .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: clamp(1.8rem, 4vw, 3rem); border-top: 1px solid var(--ligne-forte); }
 .stat { padding: 1.2rem 1.25rem 0 0; }
 .stat + .stat { padding-left: 1.25rem; border-left: 1px solid var(--ligne); }
@@ -530,8 +506,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
   .stat:nth-child(3) { padding-left: 0; border-left: 0; }
   .stat:nth-child(n + 3) { margin-top: .4rem; border-top: 1px solid var(--ligne); }
 }
-
-/* ---------- affiche du prochain match ---------- */
 
 .affiche {
   position: relative;
@@ -589,8 +563,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
   .affiche-duel { grid-template-columns: 1fr 1fr; }
   .affiche-centre { grid-column: 1 / -1; grid-row: 2; }
 }
-
-/* ---------- matchs ---------- */
 
 .matchs { display: grid; gap: .6rem; }
 .match {
@@ -672,7 +644,6 @@ main, main:focus-visible { outline: none; min-height: 70vh; }
 a.match { color: inherit; text-decoration: none; }
 a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 
-/* score en direct et buteurs sur l affiche et la fiche */
 .score-direct, .fiche-score { display: flex; justify-content: center; align-items: baseline; gap: .15em; font: 900 clamp(3.4rem, 9vw, 6.5rem)/1 var(--display); font-variant-numeric: tabular-nums; }
 .score-direct b, .fiche-score b { font-weight: 900; text-shadow: 0 0 40px var(--halo); }
 .score-direct i, .fiche-score i { font-style: normal; color: var(--texte-3); }
@@ -692,7 +663,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .buteurs span { color: var(--texte-3); }
 .buteurs-icone svg { width: 18px; height: 18px; margin-top: .25rem; }
 
-/* les cartes s adaptent a la largeur de leur colonne, pas a celle de l ecran */
 .matchs { container-type: inline-size; }
 @container (max-width: 620px) {
   .match { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); row-gap: .8rem; padding: 1rem; }
@@ -704,7 +674,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
   .match-score { min-width: 4.4rem; font-size: 1.8rem; }
 }
 
-/* controles : onglets et puces */
 .outils { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2.2rem; }
 .segment { display: inline-flex; padding: .3rem; border: 1px solid var(--ligne); border-radius: 999px; background: rgba(13, 26, 66, .8); }
 .segment button {
@@ -744,8 +713,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .puce:hover { color: var(--texte); border-color: var(--bleu-vif); }
 .puce[aria-pressed="true"] { border-color: rgba(90, 141, 255, .6); background: rgba(31, 94, 255, .18); color: var(--texte); }
 
-/* ---------- classements ---------- */
-
 .tableau-cadre { overflow-x: auto; border: 1px solid var(--ligne); border-radius: var(--rayon); background: rgba(8, 18, 48, .6); }
 .tableau { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums lining-nums; }
 .tableau th {
@@ -773,7 +740,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .tableau tr.porto td { color: #fff; }
 .tableau tr.porto .equipe-cell { font-weight: 800; }
 
-/* pareil que les matchs : le tableau s allege quand sa colonne est etroite */
 .tableau-cadre { container-type: inline-size; }
 @container (max-width: 560px) {
   .tableau .detail { display: none; }
@@ -784,8 +750,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .legende { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; margin: 1.1rem 0 0; padding: 0; list-style: none; color: var(--texte-2); font-size: .9rem; }
 .legende li { display: flex; align-items: center; gap: .5rem; }
 .legende i { width: 10px; height: 10px; border-radius: 50%; }
-
-/* ---------- accueil : blocs ---------- */
 
 .duo { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
 @media (max-width: 980px) { .duo { grid-template-columns: 1fr; } }
@@ -806,8 +770,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .chiffres strong { display: block; color: var(--or); font: 900 clamp(2.8rem, 5.5vw, 4.2rem)/1 var(--display); text-shadow: 0 0 34px rgba(240, 199, 94, .3); font-variant-numeric: tabular-nums; }
 .chiffres span { display: block; margin-top: .3rem; color: var(--texte-2); font: 800 .76rem/1.25 var(--display); letter-spacing: .14em; text-transform: uppercase; }
 @media (max-width: 860px) { .club { grid-template-columns: 1fr; } }
-
-/* ---------- effectif ---------- */
 
 .leaders { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
 .leader {
@@ -862,8 +824,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .joueur-stats div { font: 900 1.4rem/1 var(--display); font-variant-numeric: tabular-nums; }
 .joueur-stats span { display: block; margin-top: .3rem; color: var(--texte-3); font: 800 .66rem/1 var(--display); letter-spacing: .14em; text-transform: uppercase; }
 
-/* ---------- histoire : lecture longue ---------- */
-
 .lecture { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: clamp(2rem, 6vw, 5rem); align-items: start; }
 .sommaire { position: sticky; top: 6.5rem; display: flex; flex-direction: column; max-height: calc(100vh - 8rem); overflow-y: auto; border-left: 1px solid var(--ligne); scrollbar-width: thin; }
 .sommaire .partie { margin: 1.4rem 0 .3rem; padding-left: 1rem; color: var(--bleu-vif); font: 800 .72rem/1.2 var(--display); letter-spacing: .2em; text-transform: uppercase; }
@@ -897,8 +857,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .chapo { max-width: 62ch; margin: 0; color: var(--texte); font-size: 1.22rem; line-height: 1.5; }
 @media (max-width: 900px) { .lecture { grid-template-columns: 1fr; } .sommaire { display: none; } }
 
-/* ---------- palmares ---------- */
-
 .vitrine { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
 .trophee {
   position: relative;
@@ -923,8 +881,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .autre h3 { margin: 0; font: 800 1.2rem/1.1 var(--display); text-transform: uppercase; }
 .autre p { margin: .35rem 0 0; color: var(--texte-2); font-size: .92rem; }
 @media (max-width: 760px) { .autres { grid-template-columns: 1fr; } }
-
-/* ---------- stade ---------- */
 
 .stade-hero {
   position: relative;
@@ -978,8 +934,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .accordeon .contenu { padding-bottom: 1.3rem; }
 .accordeon .contenu p { margin: 0 0 1em; color: var(--lecture); }
 
-/* ---------- saisons ---------- */
-
 .saisons-choix { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .4rem; scrollbar-width: none; }
 .saisons-choix::-webkit-scrollbar { display: none; }
 .saisons-choix .puce { flex-shrink: 0; padding: .8rem 1.2rem; font-size: .95rem; }
@@ -993,8 +947,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .bilan .stats { margin-top: 0; }
 @media (max-width: 760px) { .bilan { grid-template-columns: 1fr; } }
 
-/* ---------- fiche match ---------- */
-
 .fiche-entete {
   position: relative;
   isolation: isolate;
@@ -1003,7 +955,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
   border-bottom: 1px solid var(--ligne);
   background: radial-gradient(ellipse 60% 90% at 50% -10%, rgba(31, 94, 255, .35), transparent 65%);
 }
-/* les deux blasons en geant et fondus en fond */
 .fiche-entete::before, .fiche-entete::after {
   content: "";
   position: absolute;
@@ -1039,7 +990,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .fiche-corps .titre-section { font-size: clamp(1.8rem, 3.4vw, 2.5rem); }
 @media (max-width: 900px) { .fiche-corps { grid-template-columns: 1fr; } }
 
-/* film du match : domicile a gauche, exterieur a droite, minute au milieu */
 .chrono { position: relative; display: grid; gap: .55rem; margin: 0; padding: 0; list-style: none; }
 .chrono::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--ligne-forte); }
 .evt { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 3.4rem minmax(0, 1fr); align-items: center; }
@@ -1070,7 +1020,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .carton.jaune { background: #ffd23f; box-shadow: 0 0 12px rgba(255, 210, 63, .45); }
 .carton.rouge { background: var(--rouge); box-shadow: 0 0 12px rgba(255, 77, 94, .5); }
 
-/* stats en barres comparees (porto toujours en bleu) */
 .barres-stats { display: grid; gap: 1.1rem; }
 .barre-stat-valeurs { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: .45rem; }
 .barre-stat-valeurs b { font: 900 1.35rem/1 var(--display); font-variant-numeric: tabular-nums; }
@@ -1081,7 +1030,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .barre-stat-piste.inverse i:first-child { background: rgba(238, 242, 255, .22); box-shadow: none; }
 .barre-stat-piste.inverse i:last-child { background: var(--bleu-vif); box-shadow: 0 0 14px rgba(90, 141, 255, .5); }
 
-/* compos */
 .compos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .compo { padding: 1.2rem; border: 1px solid var(--ligne); border-radius: var(--rayon); background: rgba(8, 18, 48, .6); }
 .compo-entete { display: flex; align-items: center; gap: .7rem; margin-bottom: 1rem; }
@@ -1098,7 +1046,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .compo-liste .sortie { color: var(--rouge); }
 @media (max-width: 520px) { .compos { grid-template-columns: 1fr; } }
 
-/* forme detaillee */
 .formes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
 .forme-detail h4 { margin: 0 0 .7rem; font: 900 1.05rem/1 var(--display); text-transform: uppercase; }
 .forme-detail ul { display: grid; gap: .45rem; margin: 0; padding: 0; list-style: none; }
@@ -1107,8 +1054,6 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .forme-adv { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--texte-2); }
 .forme-score { font: 800 1rem/1 var(--display); font-variant-numeric: tabular-nums; }
 @media (max-width: 520px) { .formes { grid-template-columns: 1fr; } }
-
-/* ---------- courbe de saison ---------- */
 
 .bloc-courbe { margin-bottom: clamp(3rem, 6vw, 4.5rem); }
 .courbe { padding: 1.2rem 1rem .4rem; border: 1px solid var(--ligne); border-radius: var(--rayon); background: rgba(8, 18, 48, .6); }
@@ -1146,15 +1091,11 @@ a.match:focus-visible { outline-offset: 2px; border-radius: var(--rayon); }
 .tableau-donnees th, .tableau-donnees td { padding: .3rem 1.2rem .3rem 0; text-align: right; border-bottom: 1px solid var(--ligne); }
 .tableau-donnees th { color: var(--texte-3); font: 800 .72rem/1 var(--display); letter-spacing: .14em; text-transform: uppercase; }
 
-/* ---------- pied de page ---------- */
-
 .pied { margin-top: clamp(3rem, 8vw, 6rem); padding: 2.5rem 0 3rem; border-top: 1px solid var(--ligne); color: var(--texte-3); font-size: .92rem; }
 .pied-grille { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem 3rem; }
 .pied-grille p { max-width: 70ch; margin: 0; }
 .pied a { color: var(--texte-2); }
 .pied-marque { font-size: 1.6rem; }
-
-/* ---------- mouvement reduit ---------- */
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

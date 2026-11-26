@@ -1,7 +1,3 @@
-// fc porto wiki pour windows et linux : une fenetre rien que pour le site.
-// tout vient du site en ligne donc l app est toujours a jour, et les pages deja vues
-// marchent hors ligne grace au service worker du site.
-
 const { app, BrowserWindow, Menu, shell } = require("electron");
 const path = require("node:path");
 
@@ -16,7 +12,6 @@ const estDuSite = (url) => {
   }
 };
 
-// les liens vers wikipedia, espn etc s ouvrent dans le navigateur, pas dans l app
 function ouvrirDansLeNavigateur(url) {
   if (/^https?:\/\//.test(url)) shell.openExternal(url);
 }
@@ -50,12 +45,10 @@ function creerFenetre() {
     ouvrirDansLeNavigateur(url);
   });
 
-  // premier lancement sans reseau (y a encore rien d enregistre) : j affiche une page locale
   contenu.on("did-fail-load", (_e, code, _description, url, principale) => {
     if (principale && code !== -3 && estDuSite(url)) fenetre.loadFile(PAGE_HORS_LIGNE);
   });
 
-  // les raccourcis classiques : F5 / Ctrl+R pour actualiser, Alt+fleches pour naviguer, Ctrl +/- pour zoomer, F11 plein ecran
   contenu.on("before-input-event", (evenement, touche) => {
     if (touche.type !== "keyDown") return;
     const ctrl = touche.control || touche.meta;
@@ -74,7 +67,6 @@ function creerFenetre() {
     if (gere) evenement.preventDefault();
   });
 
-  // les boutons precedent / suivant de la souris sous windows
   fenetre.on("app-command", (_e, commande) => {
     const historique = contenu.navigationHistory;
     if (commande === "browser-backward" && historique.canGoBack()) historique.goBack();
@@ -84,7 +76,6 @@ function creerFenetre() {
   fenetre.loadURL(SITE);
 }
 
-// une seule fenetre : si on relance l app sa ramene juste celle qui est deja ouverte
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {

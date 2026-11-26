@@ -32,7 +32,6 @@
     <small>Appuie sur F5 pour réessayer, l'app réessaie aussi toute seule.</small>
   </main>
   <script>
-    // sa reessaie des que le reseau revient, et toutes les 20 secondes au cas ou
     const reessayer = () => { location.href = "https://fc-porto-wiki.vercel.app"; };
     addEventListener("online", reessayer);
     setInterval(() => navigator.onLine && reessayer(), 20000);
